@@ -1,4 +1,5 @@
 enum TaskStatus { pending, inProgress, completed, cancelled }
+
 enum TaskPriority { low, medium, high, urgent }
 
 class Task {
@@ -11,7 +12,7 @@ class Task {
   final DateTime createdAt;
   final DateTime? dueDate;
   final List<String> tags;
-  
+
   Task({
     required this.id,
     required this.title,
@@ -23,14 +24,12 @@ class Task {
     this.dueDate,
     this.tags = const [],
   });
-  
-  // This method will be duplicated in multiple places
+
   bool isOverdue() {
     if (dueDate == null) return false;
     return DateTime.now().isAfter(dueDate!) && status != TaskStatus.completed;
   }
-  
-  // This validation will be duplicated elsewhere
+
   static String? validateTitle(String title) {
     if (title.isEmpty) {
       return 'Title cannot be empty';
@@ -43,8 +42,7 @@ class Task {
     }
     return null;
   }
-  
-  // This validation will also be duplicated
+
   static String? validateDescription(String description) {
     if (description.isEmpty) {
       return 'Description cannot be empty';
@@ -57,7 +55,7 @@ class Task {
     }
     return null;
   }
-  
+
   Task copyWith({
     String? title,
     String? description,

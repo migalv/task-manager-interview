@@ -4,8 +4,6 @@ import '../models/task.dart';
 import '../services/user_manager.dart';
 import '../services/notification_sender.dart';
 
-// VIOLATES Dependency Inversion Principle
-// More concrete dependencies and duplicated code patterns
 class CreateTaskScreen extends StatefulWidget {
   const CreateTaskScreen({super.key});
 
@@ -18,7 +16,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
 
-  // DIP VIOLATIONS: More direct concrete class dependencies
   final UserManager _userManager = UserManager();
   final NotificationSender _notificationSender = NotificationSender();
 
@@ -41,7 +38,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              // Title field with duplicated validation
               TextFormField(
                 controller: _titleController,
                 decoration: const InputDecoration(
@@ -51,7 +47,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                 validator: (value) => _validateTitle(value),
               ),
               const SizedBox(height: 16),
-              // Description field with duplicated validation
               TextFormField(
                 controller: _descriptionController,
                 decoration: const InputDecoration(
@@ -62,7 +57,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                 validator: (value) => _validateDescription(value),
               ),
               const SizedBox(height: 16),
-              // Priority dropdown
               DropdownButtonFormField<TaskPriority>(
                 initialValue: _selectedPriority,
                 decoration: const InputDecoration(
@@ -82,7 +76,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
                 },
               ),
               const SizedBox(height: 16),
-              // Due date picker
               InkWell(
                 onTap: _selectDueDate,
                 child: InputDecorator(
@@ -112,7 +105,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     );
   }
 
-  // DUPLICATED validation logic from Task model and other places
   String? _validateTitle(String? value) {
     if (value == null || value.isEmpty) {
       return 'Title cannot be empty';
@@ -126,7 +118,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     return null;
   }
 
-  // DUPLICATED validation logic
   String? _validateDescription(String? value) {
     if (value == null || value.isEmpty) {
       return 'Description cannot be empty';
@@ -140,7 +131,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     return null;
   }
 
-  // Duplicated priority display logic (could be elsewhere too)
   String _getPriorityDisplayName(TaskPriority priority) {
     switch (priority) {
       case TaskPriority.low:
@@ -174,7 +164,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
       return;
     }
 
-    // DIP VIOLATION: Direct access to concrete UserManager
     if (_userManager.currentUser == null) {
       _showError('You must be logged in to create tasks');
       return;
@@ -185,7 +174,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     });
 
     try {
-      // More duplicated validation (already done in form validator)
       final title = _titleController.text;
       final description = _descriptionController.text;
 
@@ -198,7 +186,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         return;
       }
 
-      // Create task - this should use a proper service/repository pattern
       final task = Task(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         title: title,
@@ -210,10 +197,9 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
         dueDate: _selectedDueDate,
       );
 
-      // Simulate API call with duplicated error handling pattern
+      // Simulate API call with error handling pattern
       await Future.delayed(const Duration(seconds: 1));
 
-      // DIP VIOLATION: Direct notification service usage
       await _notificationSender.sendNotification(
         'push',
         _userManager.currentUser!.id,
@@ -233,7 +219,6 @@ class _CreateTaskScreenState extends State<CreateTaskScreen> {
     }
   }
 
-  // Duplicated error handling pattern
   void _showError(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(content: Text(message), backgroundColor: Colors.red),
